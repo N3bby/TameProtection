@@ -52,15 +52,25 @@ To depend on it from another package's `manifest.json`:
 ```
 
 
-**This is a client-side mod.** `BaseAI.UpdateAI` is gated on `IsOwner`, so hostility
-checks run only on the peer that owns the creature's network object. On a dedicated
-server that is the nearby player's client, never the server — so installing it only on
-the server does almost nothing.
+**Install it on the server and on every client.** The two halves do different jobs:
 
-Each player who installs it gets the effect for the creatures they own, even against a
-vanilla server. Install it on **every** player's client so the behaviour is consistent:
-if one player lacks it, creatures owned by them will still hunt tames. Putting it on the
-dedicated server too is harmless but close to pointless.
+| Installed on | Gameplay effect | Configuration |
+| --- | --- | --- |
+| Client only | Works, for creatures that client owns | Local, per-player |
+| Server only | Almost nothing | — |
+| **Both** | Works | **Server-authoritative, admins can edit live** |
+
+The patch itself runs client-side: `BaseAI.UpdateAI` is gated on `IsOwner`, so hostility
+checks happen on whichever peer owns the creature — on a dedicated server that is the
+nearby player's client, never the server. So every player needs it, and a player without
+it still sees their own creatures hunt tames.
+
+The server copy is what makes the settings authoritative. `ProtectTamedFromEnemies` and
+`ProtectedPrefabs` are synced, and a client only stops using its local values once the
+server sends them (`IsSourceOfTruth` flips on `RPC_FromServerConfigSync`). Without the mod
+on the server nothing is pushed and every player silently keeps their own config — which
+matters here, because each client owns different creatures, so divergent settings make
+tames protected or not depending on who is standing nearest.
 
 - **r2modman / Thunderstore Mod Manager**: Settings → Import local mod → pick the release zip.
 - **Manual**: copy `plugins/TameProtection/` into `BepInEx/plugins/`.
@@ -72,11 +82,16 @@ protection; nothing breaks for anyone else.
 
 `BepInEx/config/com.n3bby.tameprotection.cfg`
 
-| Setting | Default | Meaning |
-| --- | --- | --- |
-| `ProtectTamedFromEnemies` | `true` | Master switch. |
-| `ProtectedPrefabs` | empty | Comma-separated prefab names (e.g. `Asksvin,Lox`). Empty protects every tamed creature. |
-| `DebugLogging` | `false` | Logs every suppressed hostility check. Noisy; testing only. |
+| Setting | Default | Synced | Meaning |
+| --- | --- | --- | --- |
+| `ProtectTamedFromEnemies` | `true` | yes | Master switch. |
+| `ProtectedPrefabs` | empty | yes | Comma-separated prefab names (e.g. `Asksvin,Lox`). Empty protects every tamed creature. |
+| `LockConfiguration` | `true` | yes | While connected, only server admins may change synced settings. |
+| `DebugLogging` | `false` | no | Logs every suppressed hostility check. Noisy; testing only. |
+
+Synced settings are owned by the server and pushed to clients on connect. Admins can
+change them live from an in-game configuration manager. Clients joining a server without
+the mod keep their own local values.
 
 ## Building
 

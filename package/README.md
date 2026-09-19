@@ -16,13 +16,17 @@ normal combat and your own attacks on tames work exactly as in vanilla.
 
 ## Install
 
-**Client-side.** `BaseAI.UpdateAI` is gated on `IsOwner`, so hostility checks run only
-on the peer that owns the creature - on a dedicated server that is the nearby player's
-client, not the server. Installing it only on the server does almost nothing.
+**Install on the server and on every client.**
 
-It works on your client alone, even against a vanilla server. Install it on every
-player's client for consistent behaviour: creatures owned by a player without the mod
-will still hunt tames.
+The patch runs client-side - `BaseAI.UpdateAI` is gated on `IsOwner`, so hostility checks
+happen on whichever peer owns the creature, which on a dedicated server is the nearby
+player's client. Every player therefore needs it; a player without it still sees their own
+creatures hunt tames.
+
+The server copy makes the configuration authoritative. Without it, nothing is synced and
+each player silently keeps their own local settings - which matters here, because clients
+own different creatures, so mismatched settings protect tames or not depending on who is
+standing nearest.
 
 - **r2modman / Thunderstore Mod Manager**: search for `TameProtection` by `N3bby` and install.
 - **Manual**: copy `plugins/TameProtection/` into `BepInEx/plugins/`.
@@ -35,11 +39,16 @@ protection; nothing breaks.
 
 `BepInEx/config/com.n3bby.tameprotection.cfg`
 
-| Setting | Default | Meaning |
-| --- | --- | --- |
-| `ProtectTamedFromEnemies` | `true` | Master switch. |
-| `ProtectedPrefabs` | empty | Comma-separated prefab names (e.g. `Asksvin,Lox`). Empty protects every tamed creature. |
-| `DebugLogging` | `false` | Logs every suppressed hostility check. Noisy; testing only. |
+| Setting | Default | Synced | Meaning |
+| --- | --- | --- | --- |
+| `ProtectTamedFromEnemies` | `true` | yes | Master switch. |
+| `ProtectedPrefabs` | empty | yes | Comma-separated prefab names (e.g. `Asksvin,Lox`). Empty protects every tamed creature. |
+| `LockConfiguration` | `true` | yes | While connected, only server admins may change synced settings. |
+| `DebugLogging` | `false` | no | Logs every suppressed hostility check. Noisy; testing only. |
+
+Synced settings are owned by the server and pushed to clients on connect. Admins can
+change them live from an in-game configuration manager. Clients joining a server without
+the mod keep their own local values.
 
 ## How it works
 
