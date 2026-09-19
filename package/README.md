@@ -16,9 +16,13 @@ normal combat and your own attacks on tames work exactly as in vanilla.
 
 ## Install
 
-Everyone needs it, including the server. Creature AI only runs on whoever owns the
-creature's network object - normally the nearest player's client - so a server-only
-install will not reliably stop mobs from targeting tames while someone is nearby.
+**Client-side.** `BaseAI.UpdateAI` is gated on `IsOwner`, so hostility checks run only
+on the peer that owns the creature - on a dedicated server that is the nearby player's
+client, not the server. Installing it only on the server does almost nothing.
+
+It works on your client alone, even against a vanilla server. Install it on every
+player's client for consistent behaviour: creatures owned by a player without the mod
+will still hunt tames.
 
 - **r2modman / Thunderstore Mod Manager**: search for `TameProtection` by `N3bby` and install.
 - **Manual**: copy `plugins/TameProtection/` into `BepInEx/plugins/`.

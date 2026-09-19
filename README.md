@@ -52,9 +52,15 @@ To depend on it from another package's `manifest.json`:
 ```
 
 
-Every player needs it, **including the dedicated server**. Creature AI only runs on
-whoever owns the creature's network object — normally the nearest player's client — so a
-server-only install will not reliably stop mobs from targeting tames.
+**This is a client-side mod.** `BaseAI.UpdateAI` is gated on `IsOwner`, so hostility
+checks run only on the peer that owns the creature's network object. On a dedicated
+server that is the nearby player's client, never the server — so installing it only on
+the server does almost nothing.
+
+Each player who installs it gets the effect for the creatures they own, even against a
+vanilla server. Install it on **every** player's client so the behaviour is consistent:
+if one player lacks it, creatures owned by them will still hunt tames. Putting it on the
+dedicated server too is harmless but close to pointless.
 
 - **r2modman / Thunderstore Mod Manager**: Settings → Import local mod → pick the release zip.
 - **Manual**: copy `plugins/TameProtection/` into `BepInEx/plugins/`.
