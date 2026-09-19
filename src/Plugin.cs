@@ -4,6 +4,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using ServerSync;
 
 namespace TameProtection
 {
@@ -14,39 +15,69 @@ namespace TameProtection
         public const string PluginName = "TameProtection";
         public const string PluginVersion = "1.0.0";
 
+        // ModRequired = false: a client without the mod is not kicked, it simply
+        // does not receive the protection. Keeps 1.0.0's lenient behaviour.
+        private static readonly ConfigSync ConfigSync = new(PluginGuid)
+        {
+            DisplayName = PluginName,
+            CurrentVersion = PluginVersion,
+            MinimumRequiredVersion = PluginVersion,
+            ModRequired = false,
+        };
+
         internal static ManualLogSource Log;
         internal static ConfigEntry<bool> ProtectTamedFromEnemies;
         internal static ConfigEntry<string> ProtectedPrefabs;
         internal static ConfigEntry<bool> DebugLogging;
+        private static ConfigEntry<bool> _serverConfigLocked;
 
         private static readonly HashSet<string> PrefabFilter =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>Bind a setting; synced ones are owned by the server.</summary>
+        private ConfigEntry<T> Bind<T>(string group, string name, T value, string description,
+                                       bool synced = true)
+        {
+            var entry = Config.Bind(group, name, value,
+                new ConfigDescription(description + (synced
+                    ? " [Synced with Server]"
+                    : " [Not Synced with Server]")));
+            ConfigSync.AddConfigEntry(entry).SynchronizedConfig = synced;
+            return entry;
+        }
 
         private void Awake()
         {
             Log = Logger;
 
-            ProtectTamedFromEnemies = Config.Bind(
+            _serverConfigLocked = Bind(
+                "General", "LockConfiguration", true,
+                "Only server admins may change synced settings while connected to a server.");
+            ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
+
+            ProtectTamedFromEnemies = Bind(
                 "General", "ProtectTamedFromEnemies", true,
                 "Wild creatures and tamed creatures no longer treat each other as enemies. " +
                 "This is mutual: enemies will not target your tames, and your tames will not " +
                 "start fights with enemies. Wild-vs-wild and tame-vs-tame are left untouched.");
 
-            ProtectedPrefabs = Config.Bind(
+            ProtectedPrefabs = Bind(
                 "General", "ProtectedPrefabs", "",
                 "Optional comma-separated creature prefab names to protect (e.g. Asksvin,Lox). " +
                 "Leave empty to protect every tamed creature.");
 
-            DebugLogging = Config.Bind(
+            // Local diagnostics: every player decides for themselves.
+            DebugLogging = Bind(
                 "General", "DebugLogging", false,
-                "Log every hostility check this mod suppresses. Very noisy; for testing only.");
+                "Log every hostility check this mod suppresses. Very noisy; for testing only.",
+                synced: false);
 
             RebuildFilter();
             ProtectedPrefabs.SettingChanged += (s, e) => RebuildFilter();
 
             new Harmony(PluginGuid).PatchAll();
             Log.LogInfo("[startup.ok] " + PluginName + " " + PluginVersion +
-                        " (patching BaseAI.IsEnemy)");
+                        " (patching BaseAI.IsEnemy; config synced with server)");
         }
 
         private static void RebuildFilter()
