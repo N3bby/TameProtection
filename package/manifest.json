@@ -1,0 +1,7 @@
+{
+    "name": "TameProtection",
+    "version_number": "1.0.0",
+    "website_url": "",
+    "description": "Wild creatures and tamed creatures ignore each other, so mobs stop hunting your tames and your tames stop picking fights.",
+    "dependencies": ["denikson-BepInExPack_Valheim-5.4.2350"]
+}

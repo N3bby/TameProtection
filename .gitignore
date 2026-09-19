@@ -1,0 +1,11 @@
+# Valheim / BepInEx / Unity assemblies are referenced locally for compilation only.
+# They are proprietary game files and must never be committed or redistributed.
+lib/
+
+# Build output
+dist/
+**/bin/
+**/obj/
+
+# Local scratch tooling
+dumper/
