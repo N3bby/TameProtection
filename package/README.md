@@ -2,6 +2,10 @@
 
 Wild creatures and tamed creatures no longer treat each other as enemies.
 
+> **AI disclosure.** This mod was written with AI assistance (Claude) — the Harmony patch,
+> configuration, build tooling and documentation. It was reviewed and tested against a live
+> Valheim 1.0.15 dedicated server. Listed under the **AI Generated** category.
+
 This restores the `ProtectTamedFromEnemies` behaviour from Wendigo's CreatureCarry
 1.3.0, which Eradorn's CustomCreatureCarry fork deliberately left out ("There are no
 egg-hatching, OdinMounts, ChebsNecromancy or general tame-protection changes").
@@ -56,4 +60,4 @@ is a 1.0 fork of CreatureCarry that keeps the carrying and deliberately omits th
 tame-protection feature. This plugin exists to fill that gap and is meant to sit
 alongside it, not replace it.
 
-Developed with AI assistance.
+See the AI disclosure at the top of this page.

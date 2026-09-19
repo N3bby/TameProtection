@@ -8,6 +8,11 @@ behave exactly as in vanilla.
 
 Built against **Valheim 1.0.15** / **BepInExPack 5.4.2350**.
 
+> **AI disclosure.** This mod was written with AI assistance (Claude). The Harmony patch,
+> plugin scaffolding, configuration, build scripts and documentation were all AI-generated,
+> then reviewed and tested against a live Valheim 1.0.15 dedicated server. It is published
+> on Thunderstore under the **AI Generated** category.
+
 ## Why
 
 This restores the `ProtectTamedFromEnemies` behaviour from
@@ -93,7 +98,7 @@ Original idea and hook: **Wendigo**, CreatureCarry 1.3.0. That package shipped w
 license file or source-repository URL, so no upstream code was reused — this is an
 independent implementation written against the decompiled `BaseAI.IsEnemy` signature.
 
-Developed with AI assistance.
+See the AI disclosure at the top of this README.
 
 ## License
 
