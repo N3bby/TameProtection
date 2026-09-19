@@ -43,6 +43,15 @@ See [`src/Plugin.cs`](src/Plugin.cs) — the whole plugin is about 100 lines.
 
 ## Install
 
+Published on Thunderstore as
+**[N3bby-TameProtection](https://thunderstore.io/c/valheim/p/N3bby/TameProtection/)**.
+To depend on it from another package's `manifest.json`:
+
+```json
+"dependencies": ["N3bby-TameProtection-1.0.0"]
+```
+
+
 Every player needs it, **including the dedicated server**. Creature AI only runs on
 whoever owns the creature's network object — normally the nearest player's client — so a
 server-only install will not reliably stop mobs from targeting tames.

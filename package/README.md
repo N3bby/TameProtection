@@ -20,7 +20,7 @@ Everyone needs it, including the server. Creature AI only runs on whoever owns t
 creature's network object - normally the nearest player's client - so a server-only
 install will not reliably stop mobs from targeting tames while someone is nearby.
 
-- **r2modman / Thunderstore Mod Manager**: Settings -> Import local mod -> pick this zip.
+- **r2modman / Thunderstore Mod Manager**: search for `TameProtection` by `N3bby` and install.
 - **Manual**: copy `plugins/TameProtection/` into `BepInEx/plugins/`.
 - **Dedicated server**: copy the same folder into the server's BepInEx plugins directory.
 
